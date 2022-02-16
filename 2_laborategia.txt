@@ -1,0 +1,55 @@
+Pausuak:
+
+root->create user 'admDBet'@'%' identified by 'asier2020';
+root->grant reload on *.* to 'admDBet'@'%';
+root->grant create on DBet.* to 'admDBet'@'%';
+admDBet->create database DBet;
+
+use DBet;
+
+1)
+admDBet->create table Bet(bId int, bGambler int, bEvent int, bAmount int, bResult varchar(10), primary key (bId));
+
+2)
+admDBet->create table Gambler(gId int, gName varchar(10), gEmail varchar(10), gCredit int,primary key (gId));
+admDBet->create table Event(eId int, eName varchar(10), eDate Date, eResult int, primary key (eId));
+
+3)
+root->grant references on DBet.Gambler TO 'admDBet'@'%';
+root->grant references on DBet.Event TO 'admDBet'@'%';
+root->grant alter on DBet.Bet TO ‘admDBet’@’%’;
+admDBet->alter table Bet add foreign key (bGambler) references Gambler(gId);
+admDBet->alter table Bet add foreign key (bEvent) references Event(eId);
+
+4)
+root->grant insert(gId,gName) ON DBet.Gambler TO 'admDBet'@'%';
+admDBet->insert into Gambler(gId,gName) values(1,"MacBeth");
+
+5)
+admDBet->insert into Gambler(gId,gName) values(2,"Betty");
+
+6)
+root->grant insert(eId, eName, eDate) ON DBet.Event TO 'admDBet'@'%';
+admDBet->insert into Event(eId, eName, eDate) values(1, "SnailRace", '2021-02-01');
+
+7)
+root->alter table Event change eName eName longtext;
+admDBet->insert into Event(eId, eName, eDate) values(2, "CaterpillarFigth",'2021-02-02');
+
+8)
+root->grant insert(bId,bGambler,bEvent,bResult) ON DBet.Bet TO 'admDBet'@'%';
+admDBet->insert into Bet(bId, bGambler, bEvent, bResult) values(1, 1, 1, "Turbo wins");
+
+9)
+root->alter table Bet change bResult bResult longtext;
+admDBet->insert into Bet(bId, bGambler, bEvent, bResult) values(2, 2, 2, "Butterflyloses");
+
+10)
+root->grant update(eDate) ON DBet.Event TO 'admDBet'@'%';
+root->grant select(eId) ON DBet.Event TO 'admDBet'@'%';
+admDBet->update Event SET eDate='2021-02-03' WHERE eId=1;
+
+11)
+root->grant create user on *.* to 'admDBet'@'%';
+admDBet->create user 'User1' identified by 'asier2020';
+admDBet->create user 'User2' identified by 'asier2020';
