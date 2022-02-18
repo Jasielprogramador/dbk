@@ -51,5 +51,88 @@ admDBet->update Event SET eDate='2021-02-03' WHERE eId=1;
 
 11)
 root->grant create user on *.* to 'admDBet'@'%';
-admDBet->create user 'User1' identified by 'asier2020';
-admDBet->create user 'User2' identified by 'asier2020';
+admDBet->create user 'LUser1' identified by 'asier2020';
+admDBet->create user 'LUser2' identified by 'asier2020';
+
+
+12)
+
+LUser1-Gambler:
+
+root->grant select(gEmail) on DBet.Gambler to admDBet with grant option;
+admDBet->grant select(gEmail) on DBet.Gambler to LUser1;
+admDBet->grant insert(gName,gCredit) on DBet.Gambler to LUser1;
+root->grant update(gName,gEmail,gCredit) on DBet.Gambler to admDBet with grant option;
+admDBet->grant update(gName,gEmail,gCredit) on DBet.Gambler to LUser1;
+
+
+LUser1-Bet:
+root->grant select(bId,bGambler,bAmount,bResult) on DBet.Bet to admDBet with grant option;
+admDBet->grant select(bId,bGambler,bAmount,bResult) on DBet.Bet to LUser1;
+root->grant insert on DBet.Bet to admDBet with grant option;
+admDBet->grant insert on DBet.Bet to LUser1;
+root->grant update on DBet.Bet to admDBet with grant option;
+admDBet->grant update on DBet.Bet to LUser1;
+
+
+LUser1-Event:
+root->grant select(eId,eDate) on DBet.Event to admDBet with grant option;
+admDBet->grant select(eId,eDate) on DBet.Event to LUser1;
+root->grant insert(eId,eName,eDate) on DBet.Event to admDBet with grant option;
+admDBet->grant insert(eId,eName,eDate) on DBet.Event to LUser1;
+root->grant update(eId,eName) on DBet.Event to admDBet with grant option;
+admDBet->grant update(eId,eName) on DBet.Event to LUser1;
+
+
+LUser1-Unspecified:
+root->create view credit as select gId,gCredit from DBet.Gambler;
+root->select gId,gCredit from DBet.Gambler;
+
+root->create view winners as select bId,bEvent from DBet.Bet where bResult like "%win%" like concat("%", Name, "%");
+root->select bId,bEvent from DBet.Bet where bResult like "%win%" like concat("%", bResult, "%");
+
+root->DELIMITER //
+root->create procedure data_aldatu (IN id int, IN data_berria int)
+	->BEGIN
+	->update Event set eDate=date(now()) where eId!=id;
+	->END //
+
+root->delimiter;
+
+root->delimeter //
+root->create procedure inportea_aldatu(IN id int,IN inporte_berria int)
+	->begin
+	->update Bet set bAmount= where bEvent=;
+	->END //
+
+
+
+LUser2-Gambler:
+root->grant select(gId,gCredit) on DBet.Gambler to admDBet with grant option;
+admDBet->grant select(gId,gCredit) on DBet.Gambler to LUser2;
+root->grant insert on DBet.Gambler to admDBet with grant option;
+admDBet->grant insert on DBet.Gambler to LUser2;
+root->grant update(gId,gName,gCredit) on DBet.Gambler to admDBet with grant option;
+admDBet->grant update(gId,gName,gCredit) on DBet.Gambler to LUser2;
+
+
+LUser2-Bet:
+root->grant select(bGambler,bEvent,bResult) on DBet.Bet to admDBet with grant option;
+admDBet->grant select(bGambler,bEvent,bResult) on DBet.Bet to LUser2;
+root->grant insert(bGambler,bEvent,bAmount) on DBet.Bet to admDBet with grant option;
+admDBet->grant insert(bGambler,bEvent,bAmount) on DBet.Bet to LUser2;
+root->grant update(bId,bGambler,bEvent) on DBet.Bet to admDBet with grant option;
+admDBet->grant update(bId,bGambler,bEvent) on DBet.Bet to LUser2;
+
+
+LUser2-Event:
+root->grant select(eName,eDate) on DBet.Event to admDBet with grant option;
+admDBet->grant select(eName,eDate) on DBet.Event to LUser2;
+root->grant insert(eId,eName,eDate) on DBet.Event to admDBet with grant option;
+admDBet->grant insert(eId,eName,eDate) on DBet.Event to LUser2;
+root->grant update on DBet.Event to admDBet with grant option;
+admDBet->grant update on DBet.Event to LUser2;
+
+
+LUser2-Unspecified:
+root->select gId,gName where g
