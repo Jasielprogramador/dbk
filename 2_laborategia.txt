@@ -136,17 +136,17 @@ LUser2-Unspecified:
 root->create view apostatu as select g.gId,g.gName from Gambler g,Bet b,Event e where b.bEvent=e.eId and year(e.eDate)=2021 and b.bGambler=g.gId group by g.gId;
 root->create view info as select bId,bEvent,bAmount from DBet.Bet a,DBet.Event b where a.bEvent=b.eId and day(eDate)=day(curdate());
 
-LUser2->delimeter //
+LUser2->delimiter //
 LUser2->create procedure doblar(in id int)
 	->begin
-	->update Bet a,Gambler b set a.bAmount=a.bAmount*2, b.gCredit=b.gCredit-a.bAmount where a.bId=id and and a.bGambler=b.gId and b.gCredit>a.bAmount*2;
+	->UPDATE Bet b, Gambler g SET b.bAmount=b.bAmount*2, g.gCredit=g.gCredit-b.bAmount WHERE b.bId=id and b.bGambler=g.gId and g.gCredit>=b.bAmount*2;
 	->end //
-LUser2->delimeter;
+LUser2->delimiter;
 
-LUser2->delimeter //
+LUser2->delimiter //
 LUser2->create procedure actualizar(in id int,in cant int)
 	->begin
 	->update Bet set bAmount=cant where bId=id;
 	->end //
-LUser2->delimeter;
+LUser2->delimiter;
 
